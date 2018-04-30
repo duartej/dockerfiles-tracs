@@ -1,0 +1,18 @@
+version: "3.2"
+
+services:
+    tracs-phusion:
+        build: .
+        image: duartej/tracs:2.0
+    
+    devcode:
+        image: duartej/tracs:2.0
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - type: bind
+              source: @CODEDIR
+              target: /home/tracs/tracs-code
+        environment:
+            - DISPLAY=unix${DISPLAY}
+        depends_on:
+            - "tracs-phusion"
