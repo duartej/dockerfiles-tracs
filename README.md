@@ -8,6 +8,9 @@ TRACS toolkit as well as the CLI and GUI executables.
 
 This is the tracs-v2 version (re-furbished).
 
+Note that in (dockerhub)[https://hub.docker.com/r/duartej/tracs/]
+the tag 1.0 is referring to the ```tracs_v1``` branch.
+
 ## Installation
 Assuming ```docker``` and ```docker-compose``` is 
 installed on your system (host-computer).
