@@ -27,7 +27,7 @@ mode.
 
 2. Download the automated build from the dockerhub: 
 ```bash
-$ docker pull duartej/tracs-ubuntu
+$ docker pull duartej/tracs:1.0
 ```
 or alternativelly you can build an image from the
 [Dockerfile](Dockerfile)
