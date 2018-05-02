@@ -1,33 +1,29 @@
 # TRACS dockerfile
 
-Creates the environment to run the TRACS toolkit.
-This image is based on an
-(phusion-baseimage)[https://github.com/phusion/baseimage-docker]
-and contains the necessary packages to run (or develop) the 
-TRACS toolkit as well as the CLI and GUI executables.
+Creates the environment to run the TRACS toolkit. This image is based on an
+[phusion-baseimage](https://github.com/phusion/baseimage-docker)
+and contains the necessary packages to run (or develop) the TRACS toolkit 
+as well as the CLI and GUI executables.
 
-This is the tracs-v2 version (re-furbished).
-
-Note that in (dockerhub)[https://hub.docker.com/r/duartej/tracs/]
-the tag 1.0 is referring to the ```tracs_v1``` branch.
+* *Image corresponding to tracs_v2_refurbished branch* at [tracs](https://gitlab.cern.ch/sifca/tracs/tree/tracs_v2_refurbished).
+* *Tagged as 2.0* at [dockerhub](https://hub.docker.com/r/duartej/tracs)
 
 ## Installation
-Assuming ```docker``` and ```docker-compose``` is 
-installed on your system (host-computer).
+Assuming ```docker``` and ```docker-compose``` is installed on your system 
+(host-computer).
 
-1. Clone the docker eudaq repository and configure it
+1. Clone the docker eudaq repository and configure it 
 ```bash 
 $ git clone https://github.com/duartej/dockerfiles-tracs
 $ cd dockerfiles-tracs
 $ source setup.sh
 ```
-The ```setup.sh``` script will create 
-some ```docker-compose.yml``` file and also creates
-the directories ```$HOME/repos/tracs``` if does not 
-exist, when downloading the code from the gitlab CERN repository
-(you need to introduce your CERN user). 
-Note that if you previously download the repository, do not 
-forget to switch to the proper branch before running any container
+The ```setup.sh``` script will create some ```docker-compose.yml``` file and 
+also creates the directories ```$HOME/repos/tracs``` if does not exist, while
+downloading the code from the gitlab CERN repository (you need to introduce 
+your CERN user). 
+*If you previously download the repository, do not forget to switch to the proper
+branch before running any container*
 ```bash
 git checkout tracs_v2_refurbished
 ```
@@ -36,24 +32,24 @@ git checkout tracs_v2_refurbished
 ```bash
 $ docker pull duartej/tracs:2.0
 ```
-or alternativelly you can build an image from the
-[Dockerfile](Dockerfile)
+or alternativelly you can build an image from the [Dockerfile](Dockerfile)
 ```bash
 # Using docker
-$ docker build github.com/duartej/tracs:2.0
+$ docker build github.com/duartej/dockerfiles-tracs#tracs_v2_refurbished
 # Using docker-compose within the repo directory
 $ docker-compose build tracs-phusion
 ```
 
 ## Mount points
 The containers created with the tracs image mount the directory 
-```/home/tracs/code```, and expect to be linked with the host 
-machine directory where the TRACS repository is ```$HOME/repos/tracs```
+* ```/home/tracs/code```, 
+and expect to be linked with the host machine directory where the TRACS repository
+is. If your using the ```docker-compose.yml``` file (see _Installation_), this 
+directory must be ```$HOME/repos/tracs``` in the host-machine.
 
 
 ## Usage
-After the setup.sh, the ```docker-compose.yml``` can be used to 
-run any container:
+After the setup.sh, the ```docker-compose.yml``` can be used to run any container:
 ```bash
 docker-compose --rm devcode
 ```
@@ -62,8 +58,14 @@ Or alternativelly, you can run it with ```docker```
 $ docker run --rm -i \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -e DISPLAY=unix${DISPLAY} \
-    --mount type=bind,source=${HOME}/repos/tracs,target=/home/tracs/code
+    --mount type=bind,source=${CODEDIR},target=/home/tracs/code
     duartej/tracs:v2.0
+```
+where ```CODEDIR``` points to the tracs repository directory of the host machine.
+Don't forget to allow the docker group to use the X-server if you need to use 
+the X-windows:
+```bash
+xhost +local:docker
 ```
 
 
