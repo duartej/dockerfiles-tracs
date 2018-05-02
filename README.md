@@ -58,7 +58,7 @@ Or alternativelly, you can run it with ```docker```
 $ docker run --rm -i \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -e DISPLAY=unix${DISPLAY} \
-    --mount type=bind,source=${CODEDIR},target=/home/tracs/code
+    --mount type=bind,source=${CODEDIR},target=/home/tracs/tracs-code
     duartej/tracs:2.0
 ```
 where ```CODEDIR``` points to the tracs repository directory of the host machine.

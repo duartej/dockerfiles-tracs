@@ -26,13 +26,14 @@ RUN apt-get update \
   && install_clean fenics \ 
   && install_clean --install-recommends \ 
   libdolfin-dev \ 
-  qt5-default \ 
+  libvtk5-qt4-dev \ 
   vim \ 
   libxpm4 \ 
   libxft2 \ 
   libtiff5 \ 
   libtbb2 \  
-  wget
+  wget \
+  sudo
 
 # ROOT 
 RUN mkdir /rootfr \ 
@@ -66,8 +67,8 @@ WORKDIR /home/tracs
 #    --mount type=bind,source=/home/duarte/repos/tracs,target=/home/tracs/code duartej/tracs_v2duartej/tracs_v2 
 USER tracs
 RUN touch /home/tracs/.sudo_as_admin_successful && \
-  mkdir /home/tracs/code
-VOLUME /home/tracs/code
+  mkdir /home/tracs/tracs-code
+VOLUME /home/tracs/tracs-code
 
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/home/tracs/code/build/lib"
 ENV PYTHONPATH="${PYTHONPATH}:/home/tracs/code/build/python"
