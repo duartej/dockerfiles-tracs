@@ -59,7 +59,7 @@ $ docker run --rm -i \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -e DISPLAY=unix${DISPLAY} \
     --mount type=bind,source=${CODEDIR},target=/home/tracs/code
-    duartej/tracs:v2.0
+    duartej/tracs:2.0
 ```
 where ```CODEDIR``` points to the tracs repository directory of the host machine.
 Don't forget to allow the docker group to use the X-server if you need to use 
