@@ -27,6 +27,9 @@ RUN apt-get update \
   && install_clean --install-recommends \ 
   libdolfin-dev \ 
   libvtk5-qt4-dev \ 
+  tcl-vtk \ 
+  python-vtk \ 
+  libvtk-java \ 
   vim \ 
   libxpm4 \ 
   libxft2 \ 
