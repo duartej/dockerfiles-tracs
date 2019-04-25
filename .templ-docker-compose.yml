@@ -1,11 +1,11 @@
 version: "3.2"
   
 services:
-    tracs-phusion:
+    tracs-ubuntu:
         build: .
         image: duartej/tracs:1.0
 
-    devcode:
+    devcode_v1:
         image: duartej/tracs:1.0
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
@@ -15,5 +15,5 @@ services:
         environment:
             - DISPLAY=unix${DISPLAY}
         depends_on:
-            - "tracs-phusion"
+            - "tracs-ubuntu"
 
