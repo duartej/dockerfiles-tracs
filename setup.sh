@@ -18,15 +18,15 @@
 # 1. Check it is running as regular user
 if [ "${EUID}" -eq 0 ];
 then
-    echo "Do not run this as root"
+    echo "*** Do not run this as root"
     exit -2
 fi
 
 # 2. Check if the setup was run:
 if [ -e ".setupdone" ];
 then
-    echo "DO NOT DOING ANYTHING, THE SETUP WAS ALREADY DONE:"
-    echo "=================================================="
+    echo "*** DO NOT DOING ANYTHING, THE SETUP WAS ALREADY DONE:"
+    echo "======================================================"
     cat .setupdone
     exit -3
 fi
@@ -35,29 +35,28 @@ DOCKERDIR=${PWD}
 
 # 3. Download the code: XXX This can be done in the image actually
 # Get ready to download the code from sifca gitlab
-echo 'Download the code from the CERN gitlab'
-read -r -p 'Enter your CERN user: ' CERNUSER
+echo '*** Download the code from the CERN gitlab'
+read -r -p '*** Enter your CERN user: ' CERNUSER
 CODEDIR=${HOME}/repos/tracs
 mkdir -p ${CODEDIR} && cd ${CODEDIR}/.. ;
 if [ "X$(command -v git)" == "X" ];
 then
-    echo "You will need to install git (https://git-scm.com/)"
+    echo "*** You will need to install git (https://git-scm.com/)"
     exit -1;
 fi
 
-echo "Cloning TRACS into : $(pwd)"
+echo "*** Cloning TRACS into : $(pwd)"
 git clone https://${CERNUSER}@gitlab.cern.ch:8443/sifca/tracs.git tracs
 
 if [ "$?" -eq 128 ];
 then
-    echo "Repository already available at '${CODEDIR}'"
-    echo "Remove it if you want to re-clone it"
-else
-    # Change to the tracs_v2_refurbished branch
-    # Better to switch to the 1.7-dev (contains bug fixes)
-    echo "Switch to tracs-v2 (refurbished) branch"
-    git checkout tracs_v2_refurbished
+    echo "*** Repository already available at '${CODEDIR}'"
+    echo "*** Remove it if you want to re-clone it"
 fi
+# Change to the tracs_v2_refurbished branch
+cd ${CODEDIR}
+echo "*** Switch to tracs-v2 (refurbished) branch"
+git checkout tracs_v2_refurbished
 
 # 3. Fill the place-holders of the .templ-Dockerfile 
 #    and .templ-docker-compose.yml and create the needed
@@ -76,9 +75,11 @@ done
 cat << EOF > .setupdone
 TRACS integration docker image and services
 TRACS v2: re-furbished
--------------------------------------------
+-------------------------------------------------------
 Last setup performed at $(date)
 CODE DIRECTORY: ${CODEDIR}
+-------------------------------------------------------
+RUN CONTAINER: docker-compose run --rm devcode
 EOF
 cat .setupdone
 

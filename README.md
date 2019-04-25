@@ -2,8 +2,7 @@
 
 Creates the environment to run the TRACS toolkit. This image is based on an
 [phusion-baseimage](https://github.com/phusion/baseimage-docker)
-and contains the necessary packages to run (or develop) the TRACS toolkit 
-as well as the CLI and GUI executables.
+and contains the necessary packages to run and develop the new TRACS v2.
 
 * *Image corresponding to tracs_v2_refurbished branch* at [tracs](https://gitlab.cern.ch/sifca/tracs/tree/tracs_v2_refurbished).
 * *Tagged as 2.0* at [dockerhub](https://hub.docker.com/r/duartej/tracs)
@@ -16,19 +15,15 @@ Assuming ```docker``` and ```docker-compose``` is installed on your system
 ```bash 
 $ git clone https://github.com/duartej/dockerfiles-tracs
 $ cd dockerfiles-tracs
-$ source setup.sh
+$ /bin/bash setup.sh
 ```
 The ```setup.sh``` script will create some ```docker-compose.yml``` file and 
 also creates the directories ```$HOME/repos/tracs``` if does not exist, while
 downloading the code from the gitlab CERN repository (you need to introduce 
-your CERN user). 
-*If you previously download the repository, do not forget to switch to the proper
-branch before running any container*
-```bash
-git checkout tracs_v2_refurbished
-```
+your CERN user). The script will also switch the repository to the proper
+branch.
 
-2. Download the automated build from the dockerhub: 
+2. Download the automated build from the dockerhub (**Recommended**): 
 ```bash
 $ docker pull duartej/tracs:2.0
 ```
@@ -42,7 +37,7 @@ $ docker-compose build tracs-phusion
 
 ## Mount points
 The containers created with the tracs image mount the directory 
-* ```/home/tracs/code```, 
+* ```/home/tracs/tracs-code```, 
 and expect to be linked with the host machine directory where the TRACS repository
 is. If your using the ```docker-compose.yml``` file (see _Installation_), this 
 directory must be ```$HOME/repos/tracs``` in the host-machine.
@@ -51,7 +46,7 @@ directory must be ```$HOME/repos/tracs``` in the host-machine.
 ## Usage
 After the setup.sh, the ```docker-compose.yml``` can be used to run any container:
 ```bash
-docker-compose --rm devcode
+docker-compose run --rm devcode
 ```
 Or alternativelly, you can run it with ```docker```
 ```bash
