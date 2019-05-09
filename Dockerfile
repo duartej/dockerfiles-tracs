@@ -25,6 +25,7 @@ RUN apt-get update \
   && apt-get update \ 
   && install_clean fenics \ 
   && install_clean --install-recommends \ 
+  build-essential \
   libdolfin-dev \ 
   libvtk5-qt4-dev \ 
   tcl-vtk \ 
