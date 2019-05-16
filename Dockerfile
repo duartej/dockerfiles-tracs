@@ -73,10 +73,13 @@ USER tracs
 RUN touch /home/tracs/.sudo_as_admin_successful && \
   mkdir /home/tracs/tracs-code
 VOLUME /home/tracs/tracs-code
+# Some friendly accesories to the python interpreter
+COPY pythonlogon_py /home/tracs/.pythonlogon.py
 
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/home/tracs/code/build/lib"
-ENV PYTHONPATH="${PYTHONPATH}:/home/tracs/code/build/python"
-ENV PATH="${PATH}:/rootfr/root/bin:/home/tracs/code/build/bin"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/home/tracs/tracs-code/build/src"
+ENV PYTHONPATH="${PYTHONPATH}:/home/tracs/tracs-code/build/tracspy/python"
+ENV PYTHONSTARTUP="/home/tracs/.pythonlogon.py"
+ENV PATH="${PATH}:/rootfr/root/bin:/home/tracs/tracs-code/build/tracspy/bin"
 
 USER root
 ENTRYPOINT ["/sbin/my_init","--quiet","--","/sbin/setuser","tracs","/bin/bash","-l","-c"]
