@@ -30,6 +30,7 @@ RUN apt-get update \
   libvtk5-qt4-dev \ 
   tcl-vtk \ 
   python-vtk \ 
+  python-numpy \
   libvtk-java \ 
   vim \ 
   libxpm4 \ 
