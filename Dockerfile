@@ -12,39 +12,66 @@
 # Build the image:
 # docker build -t duartej/tracs_v2 .
 
-FROM phusion/baseimage:0.10.1
+FROM phusion/baseimage:0.11
 LABEL author="jorge.duarte.campderros@cern.ch" \ 
-    version="0.1-alpha" \ 
+    version="0.2-alpha" \ 
     description="Docker image for refurbished TRACS-v2"
+
+ARG ROOT_VERSION=6.18.00
 
 # -- Update and get needed packages
 USER root
 RUN apt-get update \
-  && install_clean --install-recommends software-properties-common \ 
+  && install_clean --no-install-recommends software-properties-common \ 
   && add-apt-repository ppa:fenics-packages/fenics \  
   && apt-get update \ 
   && install_clean fenics \ 
-  && install_clean --install-recommends \ 
+  && install_clean --no-install-recommends \ 
   build-essential \
-  libdolfin-dev \ 
-  libvtk5-qt4-dev \ 
-  tcl-vtk \ 
-  python-vtk \ 
-  python-numpy \
-  libvtk-java \ 
+  python3-dev \ 
+  python3-numpy \
   vim \ 
   libxpm4 \ 
   libxft2 \ 
+  libxft-dev \
+  libxpm-dev \ 
+  libxext-dev \
   libtiff5 \ 
   libtbb2 \  
   wget \
+  git \ 
+  python3-click \ 
+  python3-pip \ 
+  python3-matplotlib \
+  gmsh \
   sudo
 
-# ROOT 
+# ROOT: 6.18/00
 RUN mkdir /rootfr \ 
-  && wget https://root.cern.ch/download/root_v6.12.06.Linux-ubuntu16-x86_64-gcc5.4.tar.gz -O /rootfr/root.v6.12.06.tar.gz \ 
-  && tar -xf /rootfr/root.v6.12.06.tar.gz -C /rootfr \ 
-  && rm -rf /rootfr/root.v6.12.06.tar.gz
+  && wget https://root.cern.ch/download/root_v${ROOT_VERSION}.source.tar.gz -O /rootfr/root.${ROOT_VERSION}.tar.gz \ 
+  && tar -xf /rootfr/root.${ROOT_VERSION}.tar.gz -C /rootfr \ 
+  && rm -rf /rootfr/root.${ROOT_VERSION}.tar.gz \ 
+  && mkdir /rootfr/root \ 
+  && cd /rootfr/root-${ROOT_VERSION} \ 
+  && cd build \
+  && cmake .. \
+    -Dbuiltin_fftw3=ON \ 
+    -Dbuiltin_freetype=ON \
+    -Dbuiltin_pcre=ON \
+    -Dbuiltin_lzma=ON \
+    -Dbuiltin_unuran=ON \
+    -Dbuiltin_veccore=ON \
+    -Dbuiltin_xrootd=ON \ 
+    -Dbuiltin_gsl=ON \
+    -Dpython3=ON \
+    -DPYTHON_EXECUTABLE:FILEPATH="/usr/bin/python3" \
+    -DPYTHON_INCLUDE_DIR:PATH="/usr/include/python3.6m" \
+    -DPYTHON_INCLUDE_DIR2:PATH="/usr/include/x86_64-linux-gnu/python3.6m" \
+    -DPYTHON_LIBRARY:FILEPATH="/usr/lib/x86_64-linux-gnu/libpython3.6m.so" \
+    -DCMAKE_INSTALL_PREFIX=/rootfr/root \
+  && cmake --build . -- -j4 \ 
+  && cmake --build . --target install \ 
+  && rm -rf /rootfr/root-${ROOT-VERSION}
 
 # ROOT use
 ENV ROOTSYS /rootfr/root
@@ -52,7 +79,7 @@ ENV ROOTSYS /rootfr/root
 ENV LD_LIBRARY_PATH /rootfr/root/lib
 ENV PYTHONPATH /rootfr/root/lib
 
-# User, add it to sudoers
+# User, add it to sudoers, and change python2 to python3 default
 RUN useradd -m -s /bin/bash -G sudo tracs \
   && echo "tracs:docker" | chpasswd \
   && echo "tracs ALL=(ALL) NOPASSWD: ALL\n" >> /etc/sudoers \
@@ -60,7 +87,8 @@ RUN useradd -m -s /bin/bash -G sudo tracs \
 ##  && mkdir /etc/service/syslog-forwarder \ 
 ##  && touch /etc/service/syslog-forwarder/down \
   && rm /etc/my_init.d/10_syslog-ng.init \ 
-  && ldconfig
+  && ldconfig \ 
+  && if [[ -e /usr/bin/python ]]; then unlink /usr/bin/python; ln -sf /usr/bin/python3 /usr/bin/python; fi
 
 WORKDIR /home/tracs
 
@@ -81,6 +109,8 @@ ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/home/tracs/tracs-code/build/src"
 ENV PYTHONPATH="${PYTHONPATH}:/home/tracs/tracs-code/build/tracspy/python"
 ENV PYTHONSTARTUP="/home/tracs/.pythonlogon.py"
 ENV PATH="${PATH}:/rootfr/root/bin:/home/tracs/tracs-code/build/tracspy/bin"
+
+RUN pip3 install --user meshio lxml h5py
 
 USER root
 ENTRYPOINT ["/sbin/my_init","--quiet","--","/sbin/setuser","tracs","/bin/bash","-l","-c"]
